@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css"
+          integrity="sha512-40Gk+X9t9zBtqlMhdaxJFr6UJ/fLwluv6UHrqe8YXsBlDxKKKs/rAZ3q4W8sDC1uLQVw0v/buM7Vsq90XjXbGg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <!-- Custom Styling -->
+    <style>
+        /* Base Styling */
+        body {
+            background-image: url("/images/stadium2.png");
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* Header Styling */
+        header {
+            background-color: #000;
+            color: #ffcc00;
+            padding: 15px;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header .navbar-brand {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        /* Main Container Styling */
+        .container-fluid {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 80px 50px 50px;
+            border-radius: 8px;
+            margin-top: 70px;
+            min-height: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #ffcc00;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        /* Text Styling */
+        .text-center p {
+            font-size: 1.2em;
+        }
+
+        /* Link Buttons Styling */
+        .dashboard-links a {
+            color: white;
+            font-size: 1.2em;
+            margin: 10px;
+            padding: 10px 20px;
+            display: inline-block;
+            background-color: #fb8500;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.3s ease;
+        }
+
+        .dashboard-links a:hover {
+            background-color: #edede9;
+            transform: scale(1.05);
+        }
+
+        /* Button Styling */
+        button {
+            background-color: #fb8500;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            font-size: 1.1em;
+        }
+
+        button:hover {
+            background-color: #ffcc00;
+            transform: scale(1.05);
+        }
+
+        /* Footer Styling */
+        footer {
+            background-color: #000;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            font-size: 1em;
+        }
+
+        footer p {
+            margin: 3px 0;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            margin-top: 5px;
+        }
+
+        .social-icons a {
+            margin: 0 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icons img {
+            width: 25px;
+            height: 25px;
+        }
+
+        .social-icons a:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header with Navigation Bar -->
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+<!--        <a class="navbar-brand" href="#">Stadium Tickets</a>-->
+    </nav>
+</header>
+
+<!-- Dashboard Content -->
+<div class="container-fluid">
+    <h2>Welcome to the Admin Dashboard</h2>
+    <div class="text-center">
+        <p>Logged in as: <span sec:authentication="name"></span></p>
+        <p>Role: <span sec:authentication="authorities"></span></p>
+    </div>
+
+    <!-- Dashboard Links -->
+    <div class="dashboard-links text-center">
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/view}">View Clients</a>
+        <a th:href="@{/logout}">Log Out</a>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2024 Admin Dashboard. All Rights Reserved.</p>
+    <div class="social-icons">
+        <a href="https://www.facebook.com/">
+            <img src="/images/facebook1.png" alt="Facebook" />
+        </a>
+        <a href="https://www.instagram.com/">
+            <img src="/images/instagram1.png" alt="Instagram" />
+        </a>
+        <a href="https://x.com/?lang=en">
+            <img src="/images/x1.png" alt="Twitter" />
+        </a>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"
+        integrity="sha512-40Gk+X9t9zBtqlMhdaxJFr6UJ/fLwluv6UHrqe8YXsBlDxKKKs/rAZ3q4W8sDC1uLQVw0v/buM7Vsq90XjXbGg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+</html>

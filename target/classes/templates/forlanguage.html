@@ -1,0 +1,825 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            background-color: #ca0bea; /* Light background for the body */
+            font-family: Arial, sans-serif; /* Font family */
+            margin: 0; /* Remove default margin */
+        }
+
+        header {
+            background-color: #49692a; /* Dark background for header */
+            color: #ffffff; /* White text for header */
+            padding: 10px 0; /* Padding for header */
+        }
+
+        .header-container {
+            display: flex; /* Use flexbox for layout */
+            justify-content: space-between; /* Space between items */
+            align-items: center; /* Center align items vertically */
+            padding: 0 20px; /* Padding on left and right */
+        }
+
+        #logo {
+            font-size: 1.5rem; /* Font size for logo */
+            font-weight: bold; /* Bold text for logo */
+            color: #7bff00;
+        }
+
+        .navigation-menu {
+            list-style: none; /* Remove bullet points */
+            padding: 0; /* Remove padding */
+            display: flex; /* Flexbox for horizontal layout */
+            justify-content: center; /* Center align menu items */
+            margin: 0; /* Remove margin */
+        }
+
+        .navigation-menu li {
+            margin: 0 15px; /* Space between menu items */
+        }
+
+        .navigation-menu a {
+            color: #ffffff; /* White text for links */
+            text-decoration: none; /* No underline */
+            font-weight: bold; /* Bold text for links */
+        }
+
+        .navigation-menu a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+        .profile-icon {
+            width: 40px; /* Width of the profile icon */
+            height: 40px; /* Height of the profile icon */
+            border-radius: 50%; /* Circular profile icon */
+            margin-right: 10px; /* Space between icon and text */
+        }
+
+        .container {
+            margin-top: 20px; /* Space above the container */
+            padding: 20px; /* Padding for container */
+            background-color: #ffffff; /* White background for container */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow effect */
+        }
+
+        .btn-primary {
+            background-color: #007bff; /* Primary button color */
+            border: none; /* No border */
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker shade on hover */
+        }
+
+        .btn-warning {
+            background-color: #34ff07; /* Warning button color */
+            border: none; /* No border */
+        }
+
+        .btn-warning:hover {
+            background-color: #34ff07; /* Darker shade on hover */
+        }
+
+        .btn-danger {
+            background-color: #35dcb5; /* Danger button color */
+            border: none; /* No border */
+        }
+
+        .btn-danger:hover {
+            background-color: #35dcb5; /* Darker shade on hover */
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-container">
+        <div id="logo">
+            <span id="logo-text"> Trip Management System | Admin Dashboard</span>
+        </div>
+        <ul class="navigation-menu">
+            <li><a th:href="@{/admin}" id="user-management-link">User Management</a></li>
+        </ul>
+        <div class="ms-auto d-flex align-items-center">
+            <select id="language-select" class="form-select" aria-label="Language select">
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="es">Español</option>
+            </select>
+            <a th:href="@{/user/profile}" class="d-flex align-items-center me-3">
+                <img src="path/to/profile-picture.jpg" alt="Profile" class="profile-icon"> <!-- Replace with actual image path -->
+            </a>
+            <a th:href="@{/logout}" class="btn btn-danger">Logout</a>
+        </div>
+    </div>
+</header>
+
+<div class="container mt-4">
+    <h3 id="user-management-title">User Management</h3>
+    <hr>
+    <div class="mb-3">
+        <a th:href="@{/admin/add}" class="btn btn-primary" id="add-user-button">Add New User</a>
+        <a th:href="@{/admin/search}" class="btn btn-primary" id="search-user-button">Search User</a>
+        <a th:href="@{/admin/download/users}" class="btn btn-success" id="download-data-button">Download Data</a>
+        <a th:href="@{/admin/upload}" class="btn btn-success" id="upload-data-button">Upload Data</a>
+    </div>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th><a th:href="@{/admin(sortBy='username', pageNo=${currentPage}, pageSize=${pageSize})}" id="username-header">Username</a></th>
+            <th><a th:href="@{/admin(sortBy='firstName', pageNo=${currentPage}, pageSize=${pageSize})}" id="first-name-header">First Name</a></th>
+            <th><a th:href="@{/admin(sortBy='lastName', pageNo=${currentPage}, pageSize=${pageSize})}" id="last-name-header">Last Name</a></th>
+            <th><a th:href="@{/admin(sortBy='email', pageNo=${currentPage}, pageSize=${pageSize})}" id="email-header">Email</a></th>
+            <th><a th:href="@{/admin(sortBy='phoneNumber', pageNo=${currentPage}, pageSize=${pageSize})}" id="phone-number-header">Phone Number</a></th>
+            <th>Profile Picture</th>
+            <th><a th:href="@{/admin(sortBy='role', pageNo=${currentPage}, pageSize=${pageSize})}" id="role-header">Role</a></th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.firstName}"></td>
+            <td th:text="${user.lastName}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.phoneNumber}"></td>
+            <td><img th:src="${user.profilePicture}" alt="Profile Picture" width="40" height="40"></td>
+            <td th:text="${user.role}"></td>
+            <td>
+                <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn btn-warning btn-sm" id="edit-button">Edit</a>
+                <form th:action="@{/admin/users/delete/{id}(id=${user.id})}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm" id="delete-button">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <form id="send-notification-form">
+        <input type="text" name="title" placeholder="Notification Title" required>
+        <textarea name="message" placeholder="Message" required></textarea>
+        <button type="button" onclick="sendNotification()">Send Notification</button>
+    </form>
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class ="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
+                <a class="page-link" th:href="@{/admin(pageNo=${currentPage - 1}, pageSize=${pageSize})}">Previous</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active' : ''">
+                <a class="page-link" th:href="@{/admin(pageNo=${i}, pageSize=${pageSize})}" th:text="${i + 1}"></a>
+            </li>
+            <li class ="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled' : ''">
+                <a class="page-link" th:href="@{/admin(pageNo=${currentPage + 1}, pageSize=${pageSize})}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<script>
+    const translations = {
+        en: {
+            userManagement: "User Management",
+            addUser: "Add New User",
+            searchUser: "Search User",
+            downloadData: "Download Data",
+            uploadData: "Upload Data",
+            username: "Username",
+            firstName: "First Name",
+            lastName: "Last Name",
+            email: "Email",
+            phoneNumber: "Phone Number",
+            role: "Role",
+            edit: "Edit",
+            delete: "Delete"
+        },
+        fr: {
+            userManagement: "Gestion des utilisateurs",
+            addUser: "Ajouter un nouvel utilisateur",
+            searchUser: "Rechercher un utilisateur",
+            downloadData: "Télécharger les données",
+            uploadData: "Télécharger les données",
+            username: "Nom d'utilisateur",
+            firstName: "Prénom",
+            lastName: "Nom",
+            email: "Email",
+            phoneNumber: "Numéro de téléphone",
+            role: "Rôle",
+            edit: "Modifier",
+            delete: "Supprimer"
+        },
+        es: {
+            userManagement: "Gestión de usuarios",
+            addUser: "Agregar nuevo usuario",
+            searchUser: "Buscar usuario",
+            downloadData: "Descargar datos",
+            uploadData: "Subir datos",
+            username: "Nombre de usuario",
+            firstName: "Nombre",
+            lastName: "Apellido",
+            email: "Correo electrónico",
+            phoneNumber: "Número de teléfono",
+            role: "Rol",
+            edit: "Editar",
+            delete: "Eliminar"
+        }
+    };
+
+    function changeLanguage(lang) {
+        document.getElementById('user-management-title').textContent = translations[lang].userManagement;
+        document.getElementById('add-user-button').textContent = translations[lang].addUser;
+        document.getElementById('search-user-button').textContent = translations[lang].searchUser;
+        document.getElementById('download-data-button').textContent = translations[lang].downloadData;
+        document.getElementById('upload-data-button').textContent = translations[lang].uploadData;
+        document.getElementById('username-header').textContent = translations[lang].username;
+        document.getElementById('first-name-header').textContent = translations[lang].firstName;
+        document.getElementById('last-name-header').textContent = translations[lang].lastName;
+        document.getElementById('email-header').textContent = translations[lang].email;
+        document.getElementById('phone-number-header').textContent = translations[lang].phoneNumber;
+        document.getElementById('role-header').textContent = translations[lang].role;
+        const editButtons = document.querySelectorAll('#edit-button');
+        const deleteButtons = document.querySelectorAll('#delete-button');
+        editButtons.forEach(button => button.textContent = translations[lang].edit);
+        deleteButtons.forEach(button => button.textContent = translations[lang].delete);
+    }
+
+    document.getElementById('language-select').addEventListener('change', function() {
+        changeLanguage(this.value);
+    });
+</script>
+<!-- Add Chart.js CDN in the head -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Existing HTML structure -->
+<div class="container mt-4">
+    <!-- Existing content remains unchanged -->
+
+    <!-- New Section for Charts -->
+    <div class="mt-5">
+        <h3>Statistics Overview</h3>
+        <canvas id="userChart" width="400" height="200"></canvas>
+    </div>
+</div>
+
+<script>
+    // Example data for the chart
+    const chartData = {
+        labels: ['Admins', 'Editors', 'Viewers', 'Guests'],
+        datasets: [{
+            label: 'User Roles Distribution',
+            data: [12, 19, 3, 5], // Replace with dynamic data as needed
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    // Configuration for the chart
+    const config = {
+        type: 'bar', // Change to 'pie', 'line', etc., if desired
+        data: chartData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    };
+
+    // Render the chart
+    const userChart = new Chart(
+        document.getElementById('userChart'),
+        config
+    );
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+<!--<!DOCTYPE HTML>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+
+<!--<head>-->
+<!--  &lt;!&ndash; Required meta tags &ndash;&gt;-->
+<!--  <meta charset="utf-8">-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">-->
+
+<!--  &lt;!&ndash; Bootstrap CSS &ndash;&gt;-->
+<!--  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">-->
+
+<!--  &lt;!&ndash; Chart.js &ndash;&gt;-->
+<!--  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
+<!--  &lt;!&ndash;    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js" integrity="sha512-L0Shl7nXXzIlBSUUPpxrokqq4ojqgZFQczTYlGjzONGTDAcLremjwaWv5A+EDLnxhQzY5xUZPWLOLqYRkY0Cbw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>&ndash;&gt;-->
+
+<!--  <title>Admin Dashboard</title>-->
+<!--  <style>-->
+<!--    body {-->
+<!--        background-color: #0c2136; /* Light background for the body */-->
+<!--        font-family: Arial, sans-serif; /* Font family */-->
+<!--        margin: 0; /* Remove default margin */-->
+<!--    }-->
+
+<!--    header {-->
+<!--        background-color: #145485; /* Dark background for header */-->
+<!--        color: #ffffff; /* White text for header */-->
+<!--        padding: 10px 0; /* Padding for header */-->
+<!--    }-->
+
+<!--    .header-container {-->
+<!--        display: flex; /* Use flexbox for layout */-->
+<!--        justify-content: space-between; /* Space between items */-->
+<!--        align-items: center; /* Center align items vertically */-->
+<!--        padding: 0 20px; /* Padding on left and right */-->
+<!--    }-->
+
+<!--    #logo {-->
+<!--        font-size: 1.5rem; /* Font size for logo */-->
+<!--        font-weight: bold; /* Bold text for logo */-->
+<!--        color: yellow;-->
+<!--    }-->
+
+<!--    .navigation-menu {-->
+<!--        list-style: none; /* Remove bullet points */-->
+<!--        padding: 0; /* Remove padding */-->
+<!--        display: flex; /* Flexbox for horizontal layout */-->
+<!--        justify-content: center; /* Center align menu items */-->
+<!--        margin: 0; /* Remove margin */-->
+<!--    }-->
+
+<!--    .navigation-menu li {-->
+<!--        margin: 0 15px; /* Space between menu items */-->
+<!--    }-->
+
+<!--    .navigation-menu a {-->
+<!--        color: #ffffff; /* White text for links */-->
+<!--        text-decoration: none; /* No underline */-->
+<!--        font-weight: bold; /* Bold text for links */-->
+<!--    }-->
+
+<!--    .navigation-menu a:hover {-->
+<!--        text-decoration: underline; /* Underline on hover */-->
+<!--    }-->
+
+<!--    .profile-icon {-->
+<!--        width: 40px; /* Width of the profile icon */-->
+<!--        height: 40px; /* Height of the profile icon */-->
+<!--        border-radius: 50%; /* Circular profile icon */-->
+<!--        margin-right: 10px; /* Space between icon and text */-->
+<!--    }-->
+
+<!--    .container {-->
+<!--        margin-top: 20px; /* Space above the container */-->
+<!--        padding: 20px; /* Padding for container */-->
+<!--        background-color: #ffffff; /* White background for container */-->
+<!--        border-radius: 8px; /* Rounded corners */-->
+<!--        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow effect */-->
+<!--    }-->
+
+<!--    .btn-primary {-->
+<!--        background-color: #007bff; /* Primary button color */-->
+<!--        border: none; /* No border */-->
+<!--    }-->
+
+<!--    .btn-primary:hover {-->
+<!--        background-color: #0056b3; /* Darker shade on hover */-->
+<!--    }-->
+
+<!--    .btn-warning {-->
+<!--        background-color: #ffc107; /* Warning button color */-->
+<!--        border: none; /* No border */-->
+<!--    }-->
+
+<!--    .btn-warning:hover {-->
+<!--        background-color: #e0a800; /* Darker shade on hover */-->
+<!--    }-->
+
+<!--    .btn-danger {-->
+<!--        background-color: #dc3545; /* Danger button color */-->
+<!--        border: none; /* No border */-->
+<!--    }-->
+
+<!--    .btn-danger:hover {-->
+<!--        background-color: #c82333; /* Darker shade on hover */-->
+<!--    }-->
+<!--  </style>-->
+<!--</head>-->
+
+<!--<body>-->
+
+<!--<header>-->
+<!--  <div class="header-container">-->
+<!--    <div id="logo">-->
+<!--      Trip Management | Admin Dashboard-->
+<!--    </div>-->
+<!--    <ul class="navigation-menu">-->
+<!--      <li><a th:href="@{/admin}">User  Management</a></li>-->
+<!--      &lt;!&ndash;            <li><a th:href="@{/admin/upload/furniture}">Product Management</a></li>&ndash;&gt;-->
+<!--    </ul>-->
+<!--    <div class="ms-auto d-flex align-items-center">-->
+<!--      <a th:href="@{/user/profile}" class="d-flex align-items-center me-3">-->
+<!--        <img src="path/to/profile-picture.jpg" alt="Profile" class="profile-icon"> &lt;!&ndash; Replace with actual image path &ndash;&gt;-->
+<!--      </a>-->
+<!--      <a th:href="@{/logout}" class="btn btn-danger">Logout</a>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</header>-->
+
+<!--<div class="container mt-4">-->
+<!--  <h3>User Management</h3>-->
+<!--  <hr>-->
+<!--  <div class="mb-3">-->
+<!--    <a th:href="@{/admin/add}" class="btn btn-primary">Add New User</a>-->
+<!--    <a th:href="@{/admin/search}" class="btn btn-primary">Search User</a>-->
+<!--    <a th:href="@{/admin/download/users}"  class="btn btn-success">Download Data</a>-->
+<!--    <a th:href="@{/admin/upload/furniture}"  class="btn btn-success">Upload Data</a>-->
+<!--  </div>-->
+<!--  <table class="table table-bordered table-striped">-->
+<!--    <thead class="table-dark">-->
+<!--    <tr>-->
+<!--      <th><a th:href="@{/admin(sortBy='username', pageNo=${currentPage}, pageSize=${pageSize})}">Username</a></th>-->
+<!--      <th><a th:href="@{/admin(sortBy='firstName', pageNo=${currentPage}, pageSize=${pageSize})}">First Name</a></th>-->
+<!--      <th><a th:href="@{/admin(sortBy='lastName', pageNo=${currentPage}, pageSize=${pageSize})}">Last Name</a></th>-->
+<!--      <th><a th:href="@{/admin(sortBy='email', pageNo=${currentPage}, pageSize=${pageSize})}">Email</a></th>-->
+<!--      <th><a th:href="@{/admin(sortBy='phoneNumber', pageNo=${currentPage}, pageSize=${pageSize})}">Phone Number</a></th>-->
+<!--      <th>Profile Picture</th>-->
+<!--      <th><a th:href="@{/admin(sortBy='role', pageNo=${currentPage}, pageSize=${pageSize})}">Role</a></th>-->
+<!--      <th>Actions</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+
+<!--    <tbody>-->
+<!--    <tr th:each="user : ${users}">-->
+<!--      <td th:text="${user.username}"></td>-->
+<!--      <td th:text="${user.firstName}"></td>-->
+<!--      <td th:text="${user.lastName}"></td>-->
+<!--      <td th:text="${user.email}"></td>-->
+<!--      <td th:text="${user.phoneNumber}"></td>-->
+<!--      <td><img th:src="${user.profilePicture}" alt="Profile Picture" width="40" height="40"></td>-->
+<!--      <td th:text="${user.role}"></td>-->
+<!--      <td>-->
+<!--        <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn btn-warning btn-sm">Edit</a>-->
+<!--        <form th:action="@{/admin/users/delete/{id}(id=${user.id})}" method="post" style="display:inline;">-->
+<!--          <button type="submit" class="btn btn-danger btn-sm">Delete</button>-->
+<!--        </form>-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->
+
+<!--  &lt;!&ndash; Pagination Controls &ndash;&gt;-->
+<!--  <nav aria-label="Page navigation">-->
+<!--    <ul class="pagination justify-content-center">-->
+<!--      <li class ="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">-->
+<!--        <a class="page-link" th:href="@{/admin(pageNo=${currentPage - 1}, pageSize=${pageSize})}">Previous</a>-->
+<!--      </li>-->
+<!--      <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active' : ''">-->
+<!--        <a class="page-link" th:href="@{/admin(pageNo=${i}, pageSize=${pageSize})}" th:text="${i + 1}">1</a>-->
+<!--      </li>-->
+<!--      <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">-->
+<!--        <a class="page-link" th:href="@{/admin(pageNo=${currentPage + 1}, pageSize=${pageSize})}">Next</a>-->
+<!--      </li>-->
+
+<!--    </ul>-->
+<!--  </nav>-->
+<!--  x-->
+<!--  &lt;!&ndash; Chart &ndash;&gt;-->
+<!--  <canvas id="chart" width="400" height="200"></canvas>-->
+
+<!--  <script>-->
+<!--    // Fetch user role statistics-->
+<!--    fetch('/admin/user-role-stats')-->
+<!--        .then(response => response.json())-->
+<!--        .then(data => {-->
+<!--            const roles = Object.keys(data);-->
+<!--            const roleCounts = Object.values(data);-->
+
+<!--            // Create the chart-->
+<!--            const ctx = document.getElementById('chart').getContext('2d');-->
+<!--            new Chart(ctx, {-->
+<!--                type: 'bar',-->
+<!--                data: {-->
+<!--                    labels: roles,-->
+<!--                    datasets: [{-->
+<!--                        label: 'Number of Users per Role',-->
+<!--                        data: roleCounts,-->
+<!--                        backgroundColor: 'rgba(75, 192, 192, 0.2)',-->
+<!--                        borderColor: 'rgba(75, 192, 192, 1)',-->
+<!--                        borderWidth: 1-->
+<!--                    }]-->
+<!--                },-->
+<!--                options: {-->
+<!--                    scales: {-->
+<!--                        y: {-->
+<!--                            beginAtZero: true-->
+<!--                        }-->
+<!--                    }-->
+<!--                }-->
+<!--            });-->
+<!--        })-->
+<!--        .catch(error => console.error('Error fetching user role statistics:', error));-->
+<!--  </script>-->
+
+<!--</div>-->
+
+<!--</body>-->
+<!--</html>-->
+
+
+
+
+<!--&lt;!&ndash;<!DOCTYPE HTML>&ndash;&gt;-->
+<!--&lt;!&ndash;<html lang="en" xmlns:th="http://www.thymeleaf.org">&ndash;&gt;-->
+
+<!--&lt;!&ndash;<head>&ndash;&gt;-->
+<!--&lt;!&ndash;  &lt;!&ndash; Required meta tags &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;  <meta charset="utf-8">&ndash;&gt;-->
+<!--&lt;!&ndash;  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">&ndash;&gt;-->
+
+<!--&lt;!&ndash;  &lt;!&ndash; Bootstrap CSS &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">&ndash;&gt;-->
+
+<!--&lt;!&ndash;  <title>Admin Dashboard</title>&ndash;&gt;-->
+<!--&lt;!&ndash;  <style>&ndash;&gt;-->
+<!--&lt;!&ndash;    body {&ndash;&gt;-->
+<!--&lt;!&ndash;         background-color: #ffffff; /* Light background for the body */&ndash;&gt;-->
+<!--&lt;!&ndash;         font-family: Arial, sans-serif; /* Font family */&ndash;&gt;-->
+<!--&lt;!&ndash;         margin: 0; /* Remove default margin */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     header {&ndash;&gt;-->
+<!--&lt;!&ndash;         background-color: #1abc9c; /* Dark background for header */&ndash;&gt;-->
+<!--&lt;!&ndash;         color: #ffffff; /* White text for header */&ndash;&gt;-->
+<!--&lt;!&ndash;         padding: 10px 0; /* Padding for header */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     .header-container {&ndash;&gt;-->
+<!--&lt;!&ndash;         display: flex; /* Use flexbox for layout */&ndash;&gt;-->
+<!--&lt;!&ndash;         justify-content: space-between; /* Space between items */&ndash;&gt;-->
+<!--&lt;!&ndash;         align-items: center; /* Center align items vertically */&ndash;&gt;-->
+<!--&lt;!&ndash;         padding: 0 20px; /* Padding on left and right */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     #logo {&ndash;&gt;-->
+<!--&lt;!&ndash;         font-size: 1.5rem; /* Font size for logo */&ndash;&gt;-->
+<!--&lt;!&ndash;         font-weight: bold; /* Bold text for logo */&ndash;&gt;-->
+<!--&lt;!&ndash;         color: yellow;&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     .navigation-menu {&ndash;&gt;-->
+<!--&lt;!&ndash;         list-style: none; /* Remove bullet points */&ndash;&gt;-->
+<!--&lt;!&ndash;         padding: 0; /* Remove padding */&ndash;&gt;-->
+<!--&lt;!&ndash;         display: flex; /* Flexbox for horizontal layout */&ndash;&gt;-->
+<!--&lt;!&ndash;         justify-content: center; /* Center align menu items */&ndash;&gt;-->
+<!--&lt;!&ndash;         margin: 0; /* Remove margin */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     .navigation-menu li {&ndash;&gt;-->
+<!--&lt;!&ndash;         margin: 0 15px; /* Space between menu items */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     .navigation-menu a {&ndash;&gt;-->
+<!--&lt;!&ndash;         color: #ffffff; /* White text for links */&ndash;&gt;-->
+<!--&lt;!&ndash;         text-decoration: none; /* No underline */&ndash;&gt;-->
+<!--&lt;!&ndash;         font-weight: bold; /* Bold text for links */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     .navigation-menu a:hover {&ndash;&gt;-->
+<!--&lt;!&ndash;         text-decoration: underline; /* Underline on hover */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     .profile-icon {&ndash;&gt;-->
+<!--&lt;!&ndash;         width: 40px; /* Width of the profile icon */&ndash;&gt;-->
+<!--&lt;!&ndash;         height: 40px; /* Height of the profile icon */&ndash;&gt;-->
+<!--&lt;!&ndash;         border-radius: 50%; /* Circular profile icon */&ndash;&gt;-->
+<!--&lt;!&ndash;         margin-right: 10px; /* Space between icon and text */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     .container {&ndash;&gt;-->
+<!--&lt;!&ndash;         margin-top: 20px; /* Space above the container */&ndash;&gt;-->
+<!--&lt;!&ndash;         padding: 20px; /* Padding for container */&ndash;&gt;-->
+<!--&lt;!&ndash;         background-color: #ffffff; /* White background for container */&ndash;&gt;-->
+<!--&lt;!&ndash;         border-radius: 8px; /* Rounded corners */&ndash;&gt;-->
+<!--&lt;!&ndash;         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow effect */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     .btn-primary {&ndash;&gt;-->
+<!--&lt;!&ndash;         background-color: #007bff; /* Primary button color */&ndash;&gt;-->
+<!--&lt;!&ndash;         border: none; /* No border */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     .btn-primary:hover {&ndash;&gt;-->
+<!--&lt;!&ndash;         background-color: #0056b3; /* Darker shade on hover */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     .btn-warning {&ndash;&gt;-->
+<!--&lt;!&ndash;         background-color: #ffc107; /* Warning button color */&ndash;&gt;-->
+<!--&lt;!&ndash;         border: none; /* No border */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     .btn-warning:hover {&ndash;&gt;-->
+<!--&lt;!&ndash;         background-color: #e0a800; /* Darker shade on hover */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     .btn-danger {&ndash;&gt;-->
+<!--&lt;!&ndash;         background-color: #dc3545; /* Danger button color */&ndash;&gt;-->
+<!--&lt;!&ndash;         border: none; /* No border */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+
+<!--&lt;!&ndash;     .btn-danger:hover {&ndash;&gt;-->
+<!--&lt;!&ndash;         background-color: #c82333; /* Darker shade on hover */&ndash;&gt;-->
+<!--&lt;!&ndash;     }&ndash;&gt;-->
+<!--&lt;!&ndash;  </style>&ndash;&gt;-->
+<!--&lt;!&ndash;</head>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<body>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<header>&ndash;&gt;-->
+<!--&lt;!&ndash;  <div class="header-container">&ndash;&gt;-->
+<!--&lt;!&ndash;    <div id="logo">&ndash;&gt;-->
+<!--&lt;!&ndash;      <span id="logo-text">LW Furniture | Admin Dashboard</span>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    <ul class="navigation-menu">&ndash;&gt;-->
+<!--&lt;!&ndash;      <li><a th:href="@{/admin}" id="user-management-link">User Management</a></li>&ndash;&gt;-->
+<!--&lt;!&ndash;    </ul>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div class="ms-auto d-flex align-items-center">&ndash;&gt;-->
+<!--&lt;!&ndash;      <select id="language-select" class="form-select" aria-label="Language select">&ndash;&gt;-->
+<!--&lt;!&ndash;        <option value="en">English</option>&ndash;&gt;-->
+<!--&lt;!&ndash;        <option value="fr">Français</option>&ndash;&gt;-->
+<!--&lt;!&ndash;        <option value="es">Español</option>&ndash;&gt;-->
+<!--&lt;!&ndash;      </select>&ndash;&gt;-->
+<!--&lt;!&ndash;      <a th:href="@{/user/profile}" class="d-flex align-items-center me-3">&ndash;&gt;-->
+<!--&lt;!&ndash;        <img src="path/to/profile-picture.jpg" alt="Profile" class="profile-icon"> &lt;!&ndash; Replace with actual image path &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;      </a>&ndash;&gt;-->
+<!--&lt;!&ndash;      <a th:href="@{/logout}" class="btn btn-danger">Logout</a>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;  </div>&ndash;&gt;-->
+<!--&lt;!&ndash;</header>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<div class="container mt-4">&ndash;&gt;-->
+<!--&lt;!&ndash;  <h3 id="user-management-title">User Management</h3>&ndash;&gt;-->
+<!--&lt;!&ndash;  <hr>&ndash;&gt;-->
+<!--&lt;!&ndash;  <div class="mb-3">&ndash;&gt;-->
+<!--&lt;!&ndash;    <a th:href="@{/admin/add}" class="btn btn-primary" id="add-user-button">Add New User</a>&ndash;&gt;-->
+<!--&lt;!&ndash;    <a th:href="@{/admin/search}" class="btn btn-primary" id="search-user-button">Search User</a>&ndash;&gt;-->
+<!--&lt;!&ndash;    <a th:href="@{/admin/download/users}" class="btn btn-success" id="download-data-button">Download Data</a>&ndash;&gt;-->
+<!--&lt;!&ndash;    <a th:href="@{/admin/upload}" class="btn btn-success" id="upload-data-button">Upload Data</a>&ndash;&gt;-->
+<!--&lt;!&ndash;  </div>&ndash;&gt;-->
+<!--&lt;!&ndash;  <table class="table table-bordered table-striped">&ndash;&gt;-->
+<!--&lt;!&ndash;    <thead class="table-dark">&ndash;&gt;-->
+<!--&lt;!&ndash;    <tr>&ndash;&gt;-->
+<!--&lt;!&ndash;      <th><a th:href="@{/admin(sortBy='username', pageNo=${currentPage}, pageSize=${pageSize})}" id="username-header">Username</a></th>&ndash;&gt;-->
+<!--&lt;!&ndash;      <th><a th:href="@{/admin(sortBy='firstName', pageNo=${currentPage}, pageSize=${pageSize})}" id="first-name-header">First Name</a></th>&ndash;&gt;-->
+<!--&lt;!&ndash;      <th><a th:href="@{/admin(sortBy='lastName', pageNo=${currentPage}, pageSize=${pageSize})}" id="last-name-header">Last Name</a></th>&ndash;&gt;-->
+<!--&lt;!&ndash;      <th><a th:href="@{/admin(sortBy='email', pageNo=${currentPage}, pageSize=${pageSize})}" id="email-header">Email</a></th>&ndash;&gt;-->
+<!--&lt;!&ndash;      <th><a th:href="@{/admin(sortBy='phoneNumber', pageNo=${currentPage}, pageSize=${pageSize})}" id="phone-number-header">Phone Number</a></th>&ndash;&gt;-->
+<!--&lt;!&ndash;      <th>Profile Picture</th>&ndash;&gt;-->
+<!--&lt;!&ndash;      <th><a th:href="@{/admin(sortBy='role', pageNo=${currentPage}, pageSize=${pageSize})}" id="role-header">Role</a></th>&ndash;&gt;-->
+<!--&lt;!&ndash;      <th>Actions</th>&ndash;&gt;-->
+<!--&lt;!&ndash;    </tr>&ndash;&gt;-->
+<!--&lt;!&ndash;    </thead>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <tbody>&ndash;&gt;-->
+<!--&lt;!&ndash;    <tr th:each="user : ${users}">&ndash;&gt;-->
+<!--&lt;!&ndash;      <td th:text="${user.username}"></td>&ndash;&gt;-->
+<!--&lt;!&ndash;      <td th:text="${user.firstName}"></td>&ndash;&gt;-->
+<!--&lt;!&ndash;      <td th:text="${user.lastName}"></td>&ndash;&gt;-->
+<!--&lt;!&ndash;      <td th:text="${user.email}"></td>&ndash;&gt;-->
+<!--&lt;!&ndash;      <td th:text="${user.phoneNumber}"></td>&ndash;&gt;-->
+<!--&lt;!&ndash;      <td><img th:src="${user.profilePicture}" alt="Profile Picture" width="40" height="40"></td>&ndash;&gt;-->
+<!--&lt;!&ndash;      <td th:text="${user.role}"></td>&ndash;&gt;-->
+<!--&lt;!&ndash;      <td>&ndash;&gt;-->
+<!--&lt;!&ndash;        <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn btn-warning btn-sm" id="edit-button">Edit</a>&ndash;&gt;-->
+<!--&lt;!&ndash;        <form th:action="@{/admin/users/delete/{id}(id=${user.id})}" method="post" style="display:inline;">&ndash;&gt;-->
+<!--&lt;!&ndash;          <button type="submit" class="btn btn-danger btn-sm" id="delete-button">Delete</button>&ndash;&gt;-->
+<!--&lt;!&ndash;        </form>&ndash;&gt;-->
+<!--&lt;!&ndash;      </td>&ndash;&gt;-->
+<!--&lt;!&ndash;    </tr>&ndash;&gt;-->
+<!--&lt;!&ndash;    </tbody>&ndash;&gt;-->
+<!--&lt;!&ndash;  </table>&ndash;&gt;-->
+
+<!--&lt;!&ndash;  &lt;!&ndash; Pagination Controls &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;  <nav aria-label="Page navigation">&ndash;&gt;-->
+<!--&lt;!&ndash;    <ul class="pagination justify-content-center">&ndash;&gt;-->
+<!--&lt;!&ndash;      <li class ="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">&ndash;&gt;-->
+<!--&lt;!&ndash;        <a class="page-link" th:href="@{/admin(pageNo=${currentPage - 1}, pageSize=${pageSize})}">Previous</a>&ndash;&gt;-->
+<!--&lt;!&ndash;      </li>&ndash;&gt;-->
+<!--&lt;!&ndash;      <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active' : ''">&ndash;&gt;-->
+<!--&lt;!&ndash;        <a class="page-link" th:href="@{/admin(pageNo=${i}, pageSize=${pageSize})}" th:text="${i + 1}"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;      </li>&ndash;&gt;-->
+<!--&lt;!&ndash;      <li class ="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled' : ''">&ndash;&gt;-->
+<!--&lt;!&ndash;        <a class="page-link" th:href="@{/admin(pageNo=${currentPage + 1}, pageSize=${pageSize})}">Next</a>&ndash;&gt;-->
+<!--&lt;!&ndash;      </li>&ndash;&gt;-->
+<!--&lt;!&ndash;    </ul>&ndash;&gt;-->
+<!--&lt;!&ndash;  </nav>&ndash;&gt;-->
+<!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<script>&ndash;&gt;-->
+<!--&lt;!&ndash;  const translations = {&ndash;&gt;-->
+<!--&lt;!&ndash;      en: {&ndash;&gt;-->
+<!--&lt;!&ndash;          userManagement: "User Management",&ndash;&gt;-->
+<!--&lt;!&ndash;          addUser: "Add New User",&ndash;&gt;-->
+<!--&lt;!&ndash;          searchUser: "Search User",&ndash;&gt;-->
+<!--&lt;!&ndash;          downloadData: "Download Data",&ndash;&gt;-->
+<!--&lt;!&ndash;          uploadData: "Upload Data",&ndash;&gt;-->
+<!--&lt;!&ndash;          username: "Username",&ndash;&gt;-->
+<!--&lt;!&ndash;          firstName: "First Name",&ndash;&gt;-->
+<!--&lt;!&ndash;          lastName: "Last Name",&ndash;&gt;-->
+<!--&lt;!&ndash;          email: "Email",&ndash;&gt;-->
+<!--&lt;!&ndash;          phoneNumber: "Phone Number",&ndash;&gt;-->
+<!--&lt;!&ndash;          role: "Role",&ndash;&gt;-->
+<!--&lt;!&ndash;          edit: "Edit",&ndash;&gt;-->
+<!--&lt;!&ndash;          delete: "Delete"&ndash;&gt;-->
+<!--&lt;!&ndash;      },&ndash;&gt;-->
+<!--&lt;!&ndash;      fr: {&ndash;&gt;-->
+<!--&lt;!&ndash;          userManagement: "Gestion des utilisateurs",&ndash;&gt;-->
+<!--&lt;!&ndash;          addUser: "Ajouter un nouvel utilisateur",&ndash;&gt;-->
+<!--&lt;!&ndash;          searchUser: "Rechercher un utilisateur",&ndash;&gt;-->
+<!--&lt;!&ndash;          downloadData: "Télécharger les données",&ndash;&gt;-->
+<!--&lt;!&ndash;          uploadData: "Télécharger les données",&ndash;&gt;-->
+<!--&lt;!&ndash;          username: "Nom d'utilisateur",&ndash;&gt;-->
+<!--&lt;!&ndash;          firstName: "Prénom",&ndash;&gt;-->
+<!--&lt;!&ndash;          lastName: "Nom",&ndash;&gt;-->
+<!--&lt;!&ndash;          email: "Email",&ndash;&gt;-->
+<!--&lt;!&ndash;          phoneNumber: "Numéro de téléphone",&ndash;&gt;-->
+<!--&lt;!&ndash;          role: "Rôle",&ndash;&gt;-->
+<!--&lt;!&ndash;          edit: "Modifier",&ndash;&gt;-->
+<!--&lt;!&ndash;          delete: "Supprimer"&ndash;&gt;-->
+<!--&lt;!&ndash;      },&ndash;&gt;-->
+<!--&lt;!&ndash;      es: {&ndash;&gt;-->
+<!--&lt;!&ndash;          userManagement: "Gestión de usuarios",&ndash;&gt;-->
+<!--&lt;!&ndash;          addUser: "Agregar nuevo usuario",&ndash;&gt;-->
+<!--&lt;!&ndash;          searchUser: "Buscar usuario",&ndash;&gt;-->
+<!--&lt;!&ndash;          downloadData: "Descargar datos",&ndash;&gt;-->
+<!--&lt;!&ndash;          uploadData: "Subir datos",&ndash;&gt;-->
+<!--&lt;!&ndash;          username: "Nombre de usuario",&ndash;&gt;-->
+<!--&lt;!&ndash;          firstName: "Nombre",&ndash;&gt;-->
+<!--&lt;!&ndash;          lastName: "Apellido",&ndash;&gt;-->
+<!--&lt;!&ndash;          email: "Correo electrónico",&ndash;&gt;-->
+<!--&lt;!&ndash;          phoneNumber: "Número de teléfono",&ndash;&gt;-->
+<!--&lt;!&ndash;          role: "Rol",&ndash;&gt;-->
+<!--&lt;!&ndash;          edit: "Editar",&ndash;&gt;-->
+<!--&lt;!&ndash;          delete: "Eliminar"&ndash;&gt;-->
+<!--&lt;!&ndash;      }&ndash;&gt;-->
+<!--&lt;!&ndash;  };&ndash;&gt;-->
+
+<!--&lt;!&ndash;  function changeLanguage(lang) {&ndash;&gt;-->
+<!--&lt;!&ndash;      document.getElementById('user-management-title').textContent = translations[lang].userManagement;&ndash;&gt;-->
+<!--&lt;!&ndash;      document.getElementById('add-user-button').textContent = translations[lang].addUser;&ndash;&gt;-->
+<!--&lt;!&ndash;      document.getElementById('search-user-button').textContent = translations[lang].searchUser;&ndash;&gt;-->
+<!--&lt;!&ndash;      document.getElementById('download-data-button').textContent = translations[lang].downloadData;&ndash;&gt;-->
+<!--&lt;!&ndash;      document.getElementById('upload-data-button').textContent = translations[lang].uploadData;&ndash;&gt;-->
+<!--&lt;!&ndash;      document.getElementById('username-header').textContent = translations[lang].username;&ndash;&gt;-->
+<!--&lt;!&ndash;      document.getElementById('first-name-header').textContent = translations[lang].firstName;&ndash;&gt;-->
+<!--&lt;!&ndash;      document.getElementById('last-name-header').textContent = translations[lang].lastName;&ndash;&gt;-->
+<!--&lt;!&ndash;      document.getElementById('email-header').textContent = translations[lang].email;&ndash;&gt;-->
+<!--&lt;!&ndash;      document.getElementById('phone-number-header').textContent = translations[lang].phoneNumber;&ndash;&gt;-->
+<!--&lt;!&ndash;      document.getElementById('role-header').textContent = translations[lang].role;&ndash;&gt;-->
+<!--&lt;!&ndash;      const editButtons = document.querySelectorAll('#edit-button');&ndash;&gt;-->
+<!--&lt;!&ndash;      const deleteButtons = document.querySelectorAll('#delete-button');&ndash;&gt;-->
+<!--&lt;!&ndash;      editButtons.forEach(button => button.textContent = translations[lang].edit);&ndash;&gt;-->
+<!--&lt;!&ndash;      deleteButtons.forEach(button => button.textContent = translations[lang].delete);&ndash;&gt;-->
+<!--&lt;!&ndash;  }&ndash;&gt;-->
+
+<!--&lt;!&ndash;  document.getElementById('language-select').addEventListener('change', function() {&ndash;&gt;-->
+<!--&lt;!&ndash;      changeLanguage(this.value);&ndash;&gt;-->
+<!--&lt;!&ndash;  });&ndash;&gt;-->
+<!--&lt;!&ndash;</script>&ndash;&gt;-->
+
+<!--&lt;!&ndash;</body>&ndash;&gt;-->
+<!--&lt;!&ndash;</html>&ndash;&gt;-->

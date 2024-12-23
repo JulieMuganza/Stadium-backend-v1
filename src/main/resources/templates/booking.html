@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Amahoro Ticket Booking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            background-image: url("/images/stadium.png"); /* Replace with your background image */
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3em; /* Increased font size for larger heading */
+            margin-top: 80px; /* Increased margin to push it down */
+            color: #ffcc00;
+        }
+
+        form {
+            max-width: 800px;
+            margin: 20px auto; /* Center the form and add spacing from the top */
+            padding: 40px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7); /* Transparent black background */
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        label {
+            display: inline-block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="tel"], input[type="email"], select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        input[type="file"] {
+            margin-bottom: 30px;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #3e8e41;
+        }
+
+        /* Footer Styling */
+        footer {
+            background-color: #000;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            font-size: 0.9em;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .social-icons a {
+            margin: 0 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icons img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .social-icons a:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header with Additional Margin -->
+<h1 style="margin-bottom: 20px;">BOOK YOUR TICKET WITH US</h1>
+
+<form th:action="@{/clientform}" method="POST" enctype="multipart/form-data" th:object="${booking}">
+    <label for="client_name">Client Name:</label>
+    <input type="text" id="client_name" name="client_name" th:field="*{clientName}" required>
+
+    <label for="client_email">Client Email:</label>
+    <input type="email" id="client_email" name="client_email" th:field="*{email}" required>
+
+    <label for="phone_number">Phone Number:</label>
+    <input type="tel" id="phone_number" name="phone_number" th:field="*{phoneNumber}" required>
+
+    <label for="ticket-class">Ticket class:</label>
+    <select id="ticket-class" name="ticket-class" th:field="*{ticketclass}">
+        <option value="economy">Economy</option>
+        <option value="business">Business</option>
+        <option value="first-class">First Class</option>
+    </select>
+
+    <label for="passport">Passport photo:</label>
+    <input type="file" id="passport" name="file">
+
+    <input type="submit" value="Submit">
+</form>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2024 Amahoro Ticket Booking. All Rights Reserved.</p>
+    <div class="social-icons">
+        <a href="https://www.facebook.com/">
+            <img src="/images/facebook1.png" alt="Facebook" />
+        </a>
+        <a href="https://www.instagram.com/">
+            <img src="/images/instagram1.png" alt="Instagram" />
+        </a>
+        <a href="https://x.com/?lang=en">
+            <img src="/images/x1.png" alt="Twitter" />
+        </a>
+    </div>
+</footer>
+
+</body>
+</html>

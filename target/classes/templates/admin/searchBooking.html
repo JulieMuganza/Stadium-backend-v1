@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Search Booking</title>
+</head>
+<body>
+<h2>Search Bookings</h2>
+<form action="/searchBooking" method="get">
+    <label for="clientName">Client Name:</label>
+    <input type="text" id="clientName" name="clientName" placeholder="Enter client name">
+
+    <label for="bookingDate">Booking Date:</label>
+    <input type="date" id="bookingDate" name="bookingDate">
+
+    <button type="submit">Search</button>
+</form>
+
+<div th:if="${bookings}">
+    <h3>Search Results</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Client Name</th>
+            <th>Booking Date</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="booking : ${bookings}">
+            <td th:text="${booking.clientName}"></td>
+            <td th:text="${booking.bookingDate}"></td>
+            <td th:text="${booking.email}"></td>
+            <td th:text="${booking.phoneNumber}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

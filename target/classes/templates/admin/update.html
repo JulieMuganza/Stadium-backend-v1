@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Amahoro</title>
+</head>
+<body>
+<h1>Edit Amahoro</h1>
+<form method="post" th:action="@{/update/{id}(id=${viewClient.id})}">
+    <input type="hidden" th:field="${viewClient.id}"/>
+    <label>Client Name:</label>
+    <input type="text" th:field="${viewClient.clientName}"/><br/>
+    <label>Phone Number:</label>
+    <input type="text" th:field="${viewClient.phoneNumber}"/><br/>
+    <label>Email:</label>
+    <input type="text" th:field="${viewClient.email}"/><br/>
+    <label>Ticket Class:</label>
+    <input type="text" th:field="${viewClient.ticketclass}"/><br/>
+    <button type="submit">Update</button>
+</form>
+</body>
+</html>
