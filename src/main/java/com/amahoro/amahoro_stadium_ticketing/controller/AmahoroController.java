@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "https://stadium-fontend-v1.netlify.app")
 public class AmahoroController {
 
 //    @Autowired
